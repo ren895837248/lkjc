@@ -1,0 +1,428 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;">
+    <title>耗材监控</title>
+
+    <link href="/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet">
+    <link href="/boostrapselect/bootstrap-select.min.css" rel="stylesheet">
+    <link href="/bootstraptime/bootstrap-datetimepicker.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
+    <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px ;margin-bottom: 20px">
+        <div class="form-group col-xs-12 col-sm-4  col-md-4 col-lg-4">
+            <label class="" for="consumable-type-div-id">耗材种类</label>
+            <div id="consumable-type-div-id" style="width:100%">
+                <select id="consumable-type-id" class="selectpicker" width="fit" data-live-search="true">
+                    <option value="0">全部</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-xs-12 col-sm-4  col-md-4 col-lg-4">
+            <label class="" for="consumable-item-div-id">耗 材</label>
+            <div id="consumable-item-div-id">
+                <select id="consumable-item-id" class="selectpicker" width="fit" data-live-search="true">
+                    <option value="0">全部</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-xs-12 col-sm-4  col-md-4 col-lg-4">
+            <label class="" for="consumable-specification-div-id">耗材规格</label>
+            <div id="consumable-specification-div-id">
+                <select id="consumable-specification-id" class="selectpicker" width="auto" data-live-search="true">
+                    <option value="0">全部</option>
+                </select>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="row" style="margin-top: 20px ;margin-bottom: 20px">
+        <div class="form-group col-xs-12 col-sm-4  col-md-4 col-lg-4">
+            <label for="time-begin-div-id">起始时间</label>
+            <div class='input-group date' id='time-begin-div-id'>
+                <input type='text' class="form-control" id="time-begin-id"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+
+        </div>
+        <div class="form-group col-xs-12 col-sm-4  col-md-4 col-lg-4">
+            <label for="time-end-div-id">结束时间</label>
+            <div class='input-group date' id='time-end-div-id'>
+                <input type='text' class="form-control" id="time-end-id"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-4  col-md-4 col-lg-4">
+            <label for="btn-div-show"> </label>
+            <div class="" id='btn-div-show'>
+                <button id="btn-show" class="btn btn-default">查看</button>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid" id="charts-container">
+        <!--<div class="row">
+            <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-body" id="chart-componets" style="width: 100%;height: 400px">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-body" id="chart-meihui" style="width: 100%;height: 400px">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-body" id="chart-jiaqikuai" style="width: 100%;height: 400px">
+                    </div>
+                </div>
+            </div>
+        </div>-->
+    </div>
+
+
+</div>
+</body>
+<script src="/jquery-3.4.1.min.js"></script>
+<script src="/echarts.min.js"></script>
+<script src="/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+<script src="/boostrapselect/bootstrap-select.js"></script>
+<script src="/bootstraptime/bootstrap-datetimepicker.js"></script>
+<script src="/bootstraptime/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script>
+    $(function () {
+
+        $("#time-begin-id").datetimepicker({
+            autoclose: true,
+            format: 'yyyy-mm-dd hh:ii',
+            todayBtn: true,
+            language: 'zh-CN',
+            pickerPosition: "bottom-left"
+
+        });
+        $("#time-end-id").datetimepicker({
+            autoclose: true,
+            format: 'yyyy-mm-dd hh:ii',
+            todayBtn: true,
+            language: 'zh-CN',
+            pickerPosition: "bottom-left"
+        });
+
+        function fillConsumableType() {
+            $.ajax({
+                url: '/consumable/consumabletype',
+                method: 'get',
+                success: function (data) {
+                    if (data) {
+                        var select = $("#consumable-type-id");
+                        for (var i = 0; i < data.length; i++) {
+                            var row = data[i];
+                            select.append("<option value='" + row.id + "'>" + row.name + "</option>");
+                        }
+                        select.selectpicker('refresh');
+                    }
+                    $("#consumable-item-id").prop("disabled", true);
+                    $("#consumable-item-id").selectpicker('refresh');
+                    $("#consumable-specification-id").prop("disabled", true);
+                    $("#consumable-specification-id").selectpicker('refresh');
+                },
+                error: function () {
+                    console.log("error")
+                }
+            });
+        }
+
+        function fillConsumableItem() {
+            var typeId = $("#consumable-type-id").val();
+            $.ajax({
+                url: '/consumable/' + typeId + '/consumableitem',
+                method: 'get',
+                success: function (data) {
+                    if (data) {
+                        var select = $("#consumable-item-id");
+                        select.empty();
+                        select.append("<option value='0'>全部</option>")
+                        for (var i = 0; i < data.length; i++) {
+                            var row = data[i];
+                            select.append("<option value='" + row.id + "'>" + row.name + "</option>");
+                        }
+                        select.selectpicker('refresh');
+                    }
+
+                    $("#consumable-specification-id").prop("disabled", true);
+                    $("#consumable-specification-id").selectpicker('refresh');
+                },
+                error: function () {
+                    console.log("error")
+                }
+            });
+        }
+
+        function fillConsumableSpecification() {
+            var itemId = $("#consumable-item-id").val();
+            $.ajax({
+                url: '/consumable/' + itemId + '/consumablespecification',
+                method: 'get',
+                success: function (data) {
+                    if (data) {
+                        var select = $("#consumable-specification-id");
+                        select.empty();
+                        select.append("<option value='0'>全部</option>")
+                        for (var i = 0; i < data.length; i++) {
+                            var row = data[i];
+                            select.append("<option value='" + row.id + "'>" + row.name + "</option>");
+                        }
+                        select.selectpicker('refresh');
+                    }
+                },
+                error: function () {
+                    console.log("error")
+                }
+            });
+        }
+
+        fillConsumableType()
+
+        $('#consumable-type-id').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+            var currentVal = $(this).val();
+            if (currentVal != previousValue) {
+                $("#consumable-item-id").prop("disabled", false);
+                $("#consumable-item-id").selectpicker('refresh');
+                fillConsumableItem();
+            }
+        });
+
+        $('#consumable-item-id').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+            var currentVal = $(this).val();
+            if (currentVal != previousValue) {
+                $("#consumable-specification-id").prop("disabled", false);
+            }
+            $("#consumable-item-id").selectpicker('refresh');
+            fillConsumableSpecification();
+        });
+
+        $("#btn-show").click(function () {
+            var timeBegin = $("#time-begin-id").val();
+            var timeEnd = $("#time-end-id").val();
+
+            if(!timeBegin){
+                $("#time-begin-id").focus();
+                /*var screen
+                $("body").eq(0).append('<div class="alert alert-warning alert-dismissible" style="position: fixed;top: " role="alert">\n' +
+                    '  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>\n' +
+                    '  请选择开始时间' +
+                    '</div>');*/
+                return;
+            }
+
+            if(!timeEnd){
+                $("#time-end-id").focus();
+                return;
+            }
+
+            var typeId = $("#consumable-type-id").val();
+            var itemId = $("#consumable-item-id").val();
+            var specificationId = $("#consumable-specification-id").val();
+            $.ajax({
+                url: '/consumable/' + typeId + '/' + itemId + '/' + specificationId + '/statistics?timeBeginStr=' + timeBegin + '&timeEndStr=' + timeEnd,
+                method: 'get',
+                dataType:'json',
+                success: function (charData) {
+                    console.log(charData)
+
+                    var $charsContainer = $("#charts-container");
+                    $charsContainer.html("");
+                    if (!charData)
+                        return;
+
+                    for (var i = 0; i < charData.length; i++) {
+                        var row = charData[i];
+                        $charsContainer.append(
+                            '<div class="row">' +
+                                '<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">' +
+                                    '<div class="panel panel-default">' +
+                                        '<div class="panel-body" id="chart-componets-'+i+'" style="width: 100%;height: 400px">' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div');
+
+                        debugger
+                        var componets=  document.getElementById("chart-componets-"+i);
+                        var chartComponets = echarts.init(componets);
+                        var records = row.records;
+                        var xAxisData = [];
+                        var barData = [];
+                        var lineData = [];
+                        if(records && records.length>0){
+                            for(var j=0;j<records.length;j++){
+                                xAxisData.push(records[j].date);
+                                barData.push(records[j].value);
+                                lineData.push(records[j].currentCount);
+                            }
+                        }else{
+                            continue;
+                        }
+                        console.log(xAxisData)
+                        console.log(barData)
+                        console.log(lineData)
+
+
+
+                        option = {
+                            title: {
+                                text: row.consumableName
+                            },
+                            legend: {
+                               /* data: [row.consumableName],*/
+                                align: 'left'
+                            },
+                            toolbox: {
+                                feature: {
+                                    magicType: {
+                                        type: ['stack', 'tiled']
+                                    },
+                                    dataView: {},
+                                    saveAsImage: {
+                                        pixelRatio: 2
+                                    }
+                                }
+                            },
+                            tooltip: {},
+                            xAxis: {
+                                data: xAxisData,
+                                silent: false,
+                                splitLine: {
+                                    show: false
+                                }
+                            },
+                            yAxis: {
+                            },
+                            series: [{
+                                name: '购买消耗趋势',
+                                type: 'line',
+                                data: lineData,
+                                animationDelay: function (idx) {
+                                    return idx * 10;
+                                }
+                            }, {
+                                name: '当日购买消耗',
+                                type: 'bar',
+                                data: barData,
+                                animationDelay: function (idx) {
+                                    return idx * 10 + 100;
+                                }
+                            }],
+                            animationEasing: 'elasticOut',
+                            animationDelayUpdate: function (idx) {
+                                return idx * 5;
+                            }
+                        };
+
+                        chartComponets.setOption(option)
+
+                    }
+
+
+                }
+            });
+        });
+
+
+        /*var componets=  document.getElementById("chart-componets");
+        var chartComponets = echarts.init(componets)
+        var chartMeihui = echarts.init(document.getElementById("chart-meihui"))
+        var chartJiaqikuai = echarts.init(document.getElementById("chart-jiaqikuai"))
+        var xAxisData = [];
+        var data1 = [];
+        var data2 = [];
+        for (var i = 0; i < 100; i++) {
+            xAxisData.push('类目' + i);
+            data1.push((Math.sin(i / 5) * (i / 5 -10) + i / 6) * 5);
+            data2.push((Math.cos(i / 5) * (i / 5 -10) + i / 6) * 5);
+        }
+        option = {
+            title: {
+                text: '零部件出入库图'
+            },
+            legend: {
+                data: ['bar', 'bar2'],
+                align: 'left'
+            },
+            toolbox: {
+                // y: 'bottom',
+                feature: {
+                    magicType: {
+                        type: ['stack', 'tiled']
+                    },
+                    dataView: {},
+                    saveAsImage: {
+                        pixelRatio: 2
+                    }
+                }
+            },
+            tooltip: {},
+            xAxis: {
+                data: xAxisData,
+                silent: false,
+                splitLine: {
+                    show: false
+                }
+            },
+            yAxis: {
+            },
+            series: [{
+                name: 'bar',
+                type: 'bar',
+                data: data1,
+                animationDelay: function (idx) {
+                    return idx * 10;
+                }
+            }, {
+                name: 'bar2',
+                type: 'bar',
+                data: data2,
+                animationDelay: function (idx) {
+                    return idx * 10 + 100;
+                }
+            }],
+            animationEasing: 'elasticOut',
+            animationDelayUpdate: function (idx) {
+                return idx * 5;
+            }
+        };
+
+        chartComponets.setOption(option);
+        chartMeihui.setOption(option);
+        chartJiaqikuai.setOption(option);*/
+    });
+
+
+</script>
+
+</html>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lkjc.consumablesmanager.mapper.PermissionConfigMapper">
+  <resultMap id="BaseResultMap" type="com.lkjc.consumablesmanager.entity.RoleAuthorityRel">
+    <result column="role_id" jdbcType="VARCHAR" property="roleId" />
+    <result column="authority_id" jdbcType="VARCHAR" property="authorityId" />
+    <result column="sts" jdbcType="VARCHAR" property="sts" />
+    <result column="sts_date" jdbcType="TIMESTAMP" property="stsDate" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+  </resultMap>
+
+
+  <insert id="insert" parameterType="com.lkjc.consumablesmanager.entity.RoleAuthorityRel">
+    insert into role_authority_rel (role_id, authority_id, sts,
+      sts_date, create_date)
+    values (#{roleId,jdbcType=VARCHAR}, #{authorityId,jdbcType=VARCHAR}, #{sts,jdbcType=VARCHAR}, 
+      #{stsDate,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select role_id, authority_id, sts, sts_date, create_date
+    from role_authority_rel
+  </select>
+
+  <select id="select" resultMap="BaseResultMap">
+    select role_id, authority_id, sts, sts_date, create_date
+    from role_authority_rel
+    <where>
+      <if test="role_id !=null">
+        and role_id = #{roleId}
+      </if>
+      <if test="authority_id !=null">
+        and authority_id = #{authorityId}
+      </if>
+      <if test="sts !=null">
+        and sts = #{sts}
+      </if>
+    </where>
+
+  </select>
+
+
+
+</mapper>

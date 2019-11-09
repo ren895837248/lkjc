@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Hello, Bootstrap Table!</title>
+    <link href="/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet">
+    <link href="/boostrapselect/bootstrap-select.min.css" rel="stylesheet">
+    <link href="/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">搜索</div>
+            <div class="panel-body form-horizontal">
+                <form class="form-horizontal">
+                    <div class="form-group  col-xs-12 col-sm-9  col-md-9 col-lg-9">
+                        <label class="col-sm-2  col-md-2 col-lg-2 control-label" for="consumable-item-name">描
+                            述</label>
+                        <div CLASS="col-sm-10  col-md-10 col-lg-10">
+                            <input class="col-sm-10  col-md-10 col-lg-10 form-control" id="consumable-item-name">
+                        </div>
+                    </div>
+
+                    <div class="form-group col-xs-12 col-sm-3  col-md-3 col-lg-3">
+                        <button type="button"  id="btn_search" class="btn btn-default  col-xs-10 col-xs-offset-1 col-sm-12  col-md-12 col-lg-12">查 找</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <table id="main-table">
+        </table>
+    </div>
+    <div class="btn-group" id="cudr-toolbar" role="group">
+        <button type="button" id="btn-create" class="btn btn-default" data-target="#create-modal">增加</button>
+        <button type="button" id="btn-remove" class="btn btn-default">删除</button>
+    </div>
+    <div class="modal fade" id="create-modal" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body" id="create-modal-body">
+                    <!--<form class="">
+                        <div class="form-group">
+                            <label  for="create-name">名称</label>
+                            <input class="form-control" id="create-name"/>
+                        </div>
+                        <div class="form-group">
+                            <label  for="create-type-id">名称</label>
+                            <select id="create-type-id" class="form-control selectpicker" width="fit" data-live-search="true">
+                                <option value="0">全部</option>
+                            </select>
+                        </div>
+                    </form>-->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-remove-modal-id" class="btn btn-default">关闭</button>
+                    <button type="button" id="btn-create-item" class="btn btn-primary">创建</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="alert-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body" id="alert-modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script src="/jquery-3.4.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="/echarts.min.js"></script>
+<script src="/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+<script src="/boostrapselect/bootstrap-select.js"></script>
+<script src="/bootstraptime/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="/bootstrap-table/bootstrap-table.min.js"></script>
+<script>
+
+    $(function(){
+
+        $("#btn_search").click(function () {
+            var name = $("#consumable-item-name").val();
+            $("#main-table").bootstrapTable('refresh');
+        });
+        function fillConsumableType() {
+            $.ajax({
+                url: '/consumable/consumabletype',
+                method: 'get',
+                success: function (data) {
+                    if (data) {
+                        var select = $("#create-type-id");
+                        for (var i = 0; i < data.length; i++) {
+                            var row = data[i];
+                            select.append("<option value='" + row.id + "'>" + row.name + "</option>");
+                        }
+                        select.selectpicker('refresh');
+                    }
+                },
+                error: function () {
+                    console.log("error")
+                }
+            });
+        }
+
+        function clearCreateModalBody(){
+            $("#create-modal-body").html("");
+        }
+        function createCreateModalBody(){
+            $("#create-modal-body").append('<form class="">\n' +
+                '                        <div class="form-group">\n' +
+                '                            <label  for="create-name">名称</label>\n' +
+                '                            <input class="form-control" id="create-name"/>\n' +
+                '                        </div>\n' +
+                '                        <div class="form-group">\n' +
+                '                            <label  for="create-type-id">耗材类型</label>\n' +
+                '                            <select id="create-type-id" class="form-control selectpicker" width="fit" data-live-search="true">\n' +
+                '                                <option value="0">全部</option>\n' +
+                '                            </select>\n' +
+                '                        </div>\n' +
+                '                    </form>');
+            fillConsumableType();
+        }
+
+        function alertFail(msg){
+            var alertModalBody = $("#alert-modal-body");
+            alertModalBody.html("");
+            alertModalBody.append('<div class="alert alert-danger">'+msg+'</div>' );
+
+            $("#alert-modal").modal("show");
+            setTimeout(function () {
+                $("#alert-modal").modal("hide");
+            },1200);
+        }
+
+        function alertSuccess(msg){
+            var alertModalBody = $("#alert-modal-body");
+            alertModalBody.html("");
+            alertModalBody.append('<div class="modal-body" id="alert-modal-body">\n' +
+                '                    <div class="alert alert-success">'+msg+'</div>\n' +
+                '                </div>');
+
+            $("#alert-modal").modal("show");
+            setTimeout(function () {
+                $("#alert-modal").modal("hide");
+            },1200);
+        }
+        //createModalBody();
+        /*;*/
+        $("#btn-create").click(function(){
+            clearCreateModalBody()
+            createCreateModalBody()
+            $("#create-modal").modal("show");
+        });
+
+        //btn-remove
+
+        $("#btn-remove").click(function(){
+            var selections = $("#main-table").bootstrapTable("getSelections");
+            if(!selections){
+                alertFail("请选择要删除的数据")
+                return;
+            }
+            var ids = [];
+            for(var i=0;i<selections.length;i++){
+                ids.push(selections[i].id)
+            }
+            var alertModalBody = $("#alert-modal-body");
+            alertModalBody.html("");
+            alertModalBody.append('确定删除？'
+            +'<button type="button" id="modal-btn-delete-cancle-id" class="btn btn-default">关闭</button>\n' +
+                '<button type="button" id="modal-btn-delete-confirm-id" class="btn btn-primary">确定</button>'
+            );
+
+            $("#modal-btn-delete-cancle-id").click(function () {
+                $("#alert-modal").modal("hide");
+            });
+
+            $("#modal-btn-delete-confirm-id").click(function () {
+
+                $.ajax({
+                    url:'/consumable/consumablesitems',
+                    method: 'delete',
+                    data:{name:name,consumableTypeId:typeId},
+                    success:function (data) {
+                        $("#alert-modal").modal("hide");
+                        if(data.isSuccess =='Y'){
+                            alertSuccess("删除成功");
+                            $("#main-table").bootstrapTable('refresh');
+                        }
+                    }
+                })
+            });
+
+            $("#alert-modal").modal("show");
+
+        });
+
+        $("#btn-remove-modal-id").click(function(){
+            $("#create-modal").modal("hide");
+        });
+
+        $("#btn-create-item").click(function () {
+            var name = $("#create-name").val();
+            var typeId = $("#create-type-id").val();
+            $.ajax({
+                url:'/consumable/consumablesitem',
+                method: 'post',
+                data:{name:name,consumableTypeId:typeId},
+                success:function (data) {
+                    alertSuccess("插入成功");
+                    clearCreateModalBody()
+                    $("#create-modal").modal("hide");
+                    //$table.bootstrapTable('refresh')
+                    $("#main-table").bootstrapTable('refresh');
+                }
+            });
+        });
+
+    });
+    $("#main-table").bootstrapTable({
+        url:'/consumable/consumablesitem',
+        method:'get',
+        striped: true,
+        cache: false,
+        pagination: true,
+        dataSidePagination:"server",
+        sidePagination: "server",
+        pageNumber:1,
+        //初始化加载第一页，默认第一页
+        toolbar:"#cudr-toolbar",
+        pageSize: 10,                       //每页的记录行数（*）
+        pageList: [10, 25, 50, 100],
+        queryParams: function(params){
+            var name = $("#consumable-item-name").val();
+            params.name = name;
+            console.log(params);
+            return params;
+        },
+        height: 500,
+        columns: [{
+            checkbox: true
+        }, {
+            field: 'id',
+            title: '编号'
+        }, {
+            field: 'name',
+            title: '名称'
+        }, {
+            field: 'consumableTypeId',
+            title: '类型'
+        }, {
+            field: 'sts',
+            title: '状态'
+        },  {
+            field: 'stsDate',
+            title: '状态时间'
+        }, {
+            field: 'createDate',
+            title: '创建时间'
+        },]
+
+    });
+</script>
+</body>
+</html>

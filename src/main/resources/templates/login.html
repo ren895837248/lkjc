@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>登录</title>
+
+    <link href="/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet">
+
+    <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
+    <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+        @media screen and (min-width: 768px) {
+            .login {
+                margin-top: 300px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row login">
+        <div class="col-xs-12 col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4 col-lg-4 col-lg-offset-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    登录
+                </div>
+                <div class="panel-body">
+                    <form id="login-form" class="" method="post" action="/login">
+                        <div class="form-group">
+                            <label for="username">用户名</label>
+                            <input type="text" class="form-control input-group" id="username" name="username"
+                                   placeholder="输入用户名">
+                        </div>
+
+                        <div class="form-group ">
+                            <label for="password">密码</label>
+                            <input type="password" class="form-control input-group" id="password" name="password"
+                                   placeholder="输入用密码">
+                        </div>
+
+                        <div class="form-group ">
+                            <button type="button" id="btn_login" class="btn btn-default">登录</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel-footer">西安绿康建材科技有限公司</div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<script src="/jquery-3.4.1.min.js"></script>
+<script src="/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+<script>
+    $(function () {
+
+
+        function vailFromData() {
+            if (!vailInputData($("#username"))) {
+                return false;
+            }
+            if (!vailInputData($("#password"))) {
+                return false;
+            }
+
+            return true;
+        }
+
+        function vailInputData(ele) {
+            var value = ele.val();
+            if (!value) {
+                ele.parent().addClass("has-error");
+                ele.focus();
+
+                ele.bind("change", function () {
+                    ele.parent().removeClass("has-error");
+                });
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        $("#username").blur(function () {
+            vailInputData($(this))
+        });
+        $("#passwrod").blur(function () {
+            vailInputData($(this))
+        });
+
+
+        $("#btn_login").click(function () {
+            if (!vailFromData()) {
+                return;
+            }
+            $("#login-form").get(0).submit();
+        });
+    });
+</script>
+</body>
+</html>
