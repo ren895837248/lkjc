@@ -1,7 +1,10 @@
 package com.lkjc.consumablesmanager.mapper;
 
+import com.lkjc.consumablesmanager.entity.ConsumableItem;
 import com.lkjc.consumablesmanager.entity.ConsumableSpecification;
 import java.util.List;
+
+import com.lkjc.consumablesmanager.entity.PageInfo;
 import org.apache.ibatis.annotations.Param;
 
 public interface ConsumableSpecificationMapper {
@@ -46,4 +49,10 @@ public interface ConsumableSpecificationMapper {
     int updateByPrimaryKey(ConsumableSpecification record);
 
     List<ConsumableSpecification> select(ConsumableSpecification consumableSpecification);
+
+
+    List<ConsumableItem> selectPage(@Param("pageInfo") PageInfo pageInfo, @Param("consumableSpecification") ConsumableSpecification consumableSpecification);
+
+    int selectCount(ConsumableSpecification consumableSpecification);
+
 }

@@ -48,5 +48,5 @@ public interface UserMapper {
     int updateByPrimaryKey(User record);
 
 
-    User select(User user);
+    List<User> select(User user);
 }

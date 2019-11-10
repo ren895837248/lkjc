@@ -31,13 +31,13 @@ public class LKUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = new User();
-        user.setUserName(username);
+        user.setLoginName(username);
         user.setSts(STS_USE);
-        user = userMapper.select(user);
-        if (user == null) {
+        List<User> users = userMapper.select(user);
+        if (users == null || users.size() == 0) {
             return null;
         }
-
+        user = users.get(0);
         UserRoleRel userRoleRel = new UserRoleRel();
 
         userRoleRel.setUserId(String.valueOf(user.getUserId()));

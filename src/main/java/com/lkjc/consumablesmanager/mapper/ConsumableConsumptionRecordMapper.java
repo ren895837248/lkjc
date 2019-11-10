@@ -3,6 +3,8 @@ package com.lkjc.consumablesmanager.mapper;
 import com.lkjc.consumablesmanager.entity.ConsumableConsumptionRecord;
 import com.lkjc.consumablesmanager.entity.ConsumablePurchaseRecord;
 import com.lkjc.consumablesmanager.entity.ConsumableStatiticsInit;
+import com.lkjc.consumablesmanager.entity.PageInfo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -48,5 +50,9 @@ public interface ConsumableConsumptionRecordMapper {
     int updateByPrimaryKey(ConsumableConsumptionRecord record);
 
     List<ConsumableConsumptionRecord> conductStatistics(ConsumableStatiticsInit consumableStatiticsInit);
+
+    List<ConsumableConsumptionRecord> selectPage(@Param("pageInfo") PageInfo pageInfo, @Param("consumableConsumptionRecord") ConsumableConsumptionRecord record);
+
+    int selectCount(@Param("consumableConsumptionRecord") ConsumableConsumptionRecord record);
 
 }

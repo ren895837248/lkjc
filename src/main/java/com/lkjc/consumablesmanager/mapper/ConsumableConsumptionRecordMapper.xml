@@ -10,13 +10,16 @@
     <result column="consumable_item_id" jdbcType="INTEGER" property="consumableItemId" />
     <result column="consumable_specification_id" jdbcType="INTEGER" property="consumableSpecificationId" />
     <result column="consumable_type_id" jdbcType="INTEGER" property="consumableTypeId" />
-    <result column="consumable_item_name" jdbcType="INTEGER" property="consumableItemName"/>
-    <result column="consumable_specification_name" jdbcType="INTEGER" property="consumableSpecificationName"/>
-    <result column="consumable_type_name" jdbcType="INTEGER" property="consumableTypeName"/>
+    <result column="consumable_item_name" jdbcType="VARCHAR" property="consumableItemName"/>
+    <result column="consumable_specification_name" jdbcType="VARCHAR" property="consumableSpecificationName"/>
+    <result column="consumable_type_name" jdbcType="VARCHAR" property="consumableTypeName"/>
     <result column="recipients_id" jdbcType="INTEGER" property="recipientsId" />
+    <result column="recipients_name" jdbcType="VARCHAR" property="recipientsName" />
     <result column="reviewer_id" jdbcType="INTEGER" property="reviewerId" />
+    <result column="reviewer_name" jdbcType="VARCHAR" property="reviewerName" />
     <result column="count" jdbcType="INTEGER" property="count" />
     <result column="unit_id" jdbcType="INTEGER" property="unitId" />
+    <result column="unit_name" jdbcType="VARCHAR" property="unitName" />
     <result column="sts" jdbcType="CHAR" property="sts" />
     <result column="sts_date" jdbcType="TIMESTAMP" property="stsDate" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
@@ -105,4 +108,65 @@
       group by ccr.consumable_type_id, ccr.consumable_item_id, ccr.consumable_specification_id, ccr.create_date;
       
     </select>
+
+  <select id="selectPage" resultMap="BaseResultMap">
+    select id,
+    consumable_type_id,(select name from consumable_type ct where ct.id = consumable_type_id) consumable_type_name,
+    consumable_item_id, (select name from consumable_item ci where ci.id = consumable_item_id) consumable_item_name,
+    consumable_specification_id,(select name from consumable_specification cs where cs.id = consumable_specification_id) consumable_specification_name,
+
+    recipients_id, (select user_name from user where user_id = recipients_id ) recipients_name,
+    reviewer_id,(select user_name from user where user_id = reviewer_id ) reviewer_name,
+    unit_id,(select name from unit_item where id = unit_id ) unit_name,
+    count, sts, sts_date, create_date
+    from consumable_consumption_record
+    where 1=1
+    <if test="consumableConsumptionRecord.consumableTypeId!=null and consumableConsumptionRecord.consumableTypeId!=0">
+      and consumable_type_id = #{consumableConsumptionRecord.consumableTypeId}
+    </if>
+
+    <if test="consumableConsumptionRecord.consumableItemId!=null and consumableConsumptionRecord.consumableItemId!=0">
+      and consumable_item_id = #{consumableConsumptionRecord.consumableItemId}
+    </if>
+
+    <if test="consumableConsumptionRecord.consumableSpecificationId!=null and consumableConsumptionRecord.consumableSpecificationId!=0">
+      and consumable_specification_id = #{consumableConsumptionRecord.consumableSpecificationId}
+    </if>
+    <if test="consumableConsumptionRecord.timeBegin!=null">
+      and create_date &gt; #{consumableConsumptionRecord.timeBegin}
+    </if>
+    <if test="consumableConsumptionRecord.timeEnd!=null">
+      and create_date &lt; #{consumableConsumptionRecord.timeEnd}
+    </if>
+    <if test="pageInfo.sortName!=null">
+      order by ${pageInfo.sortName}
+      <if test="pageInfo.order!=null">
+        ${pageInfo.order}
+      </if>
+    </if>
+    limit #{pageInfo.offset},#{pageInfo.limit}
+  </select>
+  <select id="selectCount" resultType="int">
+    select count(1) `count`
+    from consumable_consumption_record
+    where 1=1
+    <if test="consumableConsumptionRecord.consumableTypeId!=null and consumableConsumptionRecord.consumableTypeId!=0">
+      and consumable_type_id = #{consumableConsumptionRecord.consumableTypeId}
+    </if>
+
+    <if test="consumableConsumptionRecord.consumableItemId!=null and consumableConsumptionRecord.consumableItemId!=0">
+      and consumable_item_id = #{consumableConsumptionRecord.consumableItemId}
+    </if>
+
+    <if test="consumableConsumptionRecord.consumableSpecificationId!=null and consumableConsumptionRecord.consumableSpecificationId!=0">
+      and consumable_specification_id = #{consumableConsumptionRecord.consumableSpecificationId}
+    </if>
+    <if test="consumableConsumptionRecord.timeBegin!=null">
+      and create_date &gt; #{consumableConsumptionRecord.timeBegin}
+    </if>
+    <if test="consumableConsumptionRecord.timeEnd!=null">
+      and create_date &lt; #{consumableConsumptionRecord.timeEnd}
+    </if>
+  </select>
+  
 </mapper>

@@ -47,8 +47,8 @@ public interface ConsumableItemMapper {
      */
     int updateByPrimaryKey(ConsumableItem record);
 
-    int selectCount(ConsumableItem record);
-
-    List<ConsumableItem> select(ConsumableItem consumableItem);
     List<ConsumableItem> selectPage(@Param("pageInfo") PageInfo pageInfo, @Param("consumableItem") ConsumableItem consumableItem);
+
+    int selectCount(ConsumableItem record);
+    List<ConsumableItem> select(ConsumableItem consumableItem);
 }

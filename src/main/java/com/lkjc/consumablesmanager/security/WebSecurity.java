@@ -18,11 +18,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
 
                 .authorizeRequests()
-                .antMatchers("/**").permitAll()
-                .antMatchers("/**/**.css","/**/*.js").permitAll()
+                .antMatchers("/**/**.css","/**/**.js").permitAll()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/index").permitAll()
-                //.antMatchers("/**").access("hasRole('ADMIN')")
+                .antMatchers("/**").access("hasRole('ADMIN')")
                 .and()
                 .formLogin()
                 .usernameParameter("username")

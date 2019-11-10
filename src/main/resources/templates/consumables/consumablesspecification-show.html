@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;">
-    <title>Hello, Bootstrap Table!</title>
+    <title>耗材规格</title>
     <link href="/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet">
     <link href="/boostrapselect/bootstrap-select.min.css" rel="stylesheet">
     <link href="/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
@@ -28,10 +28,10 @@
             <div class="panel-body form-horizontal">
                 <form class="form-horizontal">
                     <div class="form-group  col-xs-12 col-sm-9  col-md-9 col-lg-9">
-                        <label class="col-sm-2  col-md-2 col-lg-2 control-label" for="consumable-item-name">描
+                        <label class="col-sm-2  col-md-2 col-lg-2 control-label" for="consumable-specification-name">描
                             述</label>
                         <div CLASS="col-sm-10  col-md-10 col-lg-10">
-                            <input class="col-sm-10  col-md-10 col-lg-10 form-control" id="consumable-item-name">
+                            <input class="col-sm-10  col-md-10 col-lg-10 form-control" id="consumable-specification-name">
                         </div>
                     </div>
 
@@ -122,12 +122,51 @@
                         }
                         select.selectpicker('refresh');
                     }
+                    $("#create-item-id").prop("disabled", true);
+                    $("#create-item-id").selectpicker('refresh');
+
+                    $('#create-type-id').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                        var currentVal = $(this).val();
+                        if (currentVal != previousValue) {
+                            $("#create-item-id").prop("disabled", false);
+                            $("#create-item-id").selectpicker('refresh');
+                            fillConsumableItem();
+                        }
+                    });
+
+                },
+                error: function () {
+                    console.log("error")
+                }
+            });
+
+
+        }
+
+        function fillConsumableItem() {
+            var typeId = $("#create-type-id").val();
+            $.ajax({
+                url: '/consumable/' + typeId + '/consumableitem',
+                method: 'get',
+                success: function (data) {
+                    if (data) {
+                        var select = $("#create-item-id");
+                        select.empty();
+                        select.append("<option value='0'>全部</option>")
+                        for (var i = 0; i < data.length; i++) {
+                            var row = data[i];
+                            select.append("<option value='" + row.id + "'>" + row.name + "</option>");
+                        }
+                        select.selectpicker('refresh');
+                    }
                 },
                 error: function () {
                     console.log("error")
                 }
             });
         }
+
+
 
         function clearCreateModalBody() {
             $("#create-modal-body").html("");
@@ -142,6 +181,12 @@
                 '                        <div class="form-group">\n' +
                 '                            <label  for="create-type-id">耗材类型</label>\n' +
                 '                            <select id="create-type-id" class="form-control selectpicker" width="fit" data-live-search="true">\n' +
+                '                                <option value="0">全部</option>\n' +
+                '                            </select>\n' +
+                '                        </div>\n' +
+                '                        <div class="form-group">\n' +
+                '                            <label  for="create-item-id">耗材</label>\n' +
+                '                            <select id="create-item-id" class="form-control selectpicker" width="fit" data-live-search="true">\n' +
                 '                                <option value="0">全部</option>\n' +
                 '                            </select>\n' +
                 '                        </div>\n' +
@@ -189,12 +234,10 @@
                 alertFail("请选择要删除的数据")
                 return;
             }
-            console.log(selections)
             var dids = [];
             for (var i = 0; i < selections.length; i++) {
-                dids.push(selections[i].id)
+                dids.push(selections[i].id+","+selections[i].consumableItemId)
             }
-            console.log(dids)
             var alertModalBody = $("#alert-modal-body");
             alertModalBody.html("");
             alertModalBody.append('确定删除？'
@@ -209,7 +252,7 @@
             $("#modal-btn-delete-confirm-id").click(function () {
                 $("#alert-modal").modal("hide");
                 $.ajax({
-                    url: '/consumable/consumablesitems',
+                    url: '/consumable/consumablesspecification',
                     method: 'delete',
                     dataType:'json',
                     contentType:"application/json",
@@ -234,24 +277,28 @@
 
         $("#btn-create-item").click(function () {
             var name = $("#create-name").val();
-            var typeId = $("#create-type-id").val();
+            var iteamId = $("#create-item-id").val();
+            $("#create-modal").modal("hide");
             $.ajax({
-                url: '/consumable/consumablesitem',
+                url: '/consumable/consumablesspecification',
                 method: 'post',
-                data: {name: name, consumableTypeId: typeId},
+                data: {name: name, consumableItemId: iteamId},
                 success: function (data) {
                     alertSuccess("插入成功");
                     clearCreateModalBody()
                     $("#create-modal").modal("hide");
                     //$table.bootstrapTable('refresh')
                     $("#main-table").bootstrapTable('refresh');
+                },
+                error:function () {
+                    alertFail("插入失败");
                 }
             });
         });
 
     });
     $("#main-table").bootstrapTable({
-        url: '/consumable/consumablesitem',
+        url: '/consumable/consumablesspecification',
         method: 'get',
         striped: true,
         cache: false,
@@ -264,7 +311,7 @@
         pageSize: 10,                       //每页的记录行数（*）
         pageList: [10, 25, 50, 100],
         queryParams: function (params) {
-            var name = $("#consumable-item-name").val();
+            var name = $("#consumable-specification-name").val();
             params.name = name;
             console.log(params);
             return params;
@@ -276,13 +323,18 @@
             field: 'id',
             title: '编号',
             clickToSelect: true
+        },  {
+            field: 'consumableItemName',
+            title: '消耗品名称',
+            clickToSelect: true,
+        },{
+            field: 'consumableItemId',
+            title: '消耗品',
+            clickToSelect: true,
+            visible:false
         }, {
             field: 'name',
             title: '名称',
-            clickToSelect: true
-        }, {
-            field: 'consumableTypeId',
-            title: '类型',
             clickToSelect: true
         }, {
             field: 'sts',
@@ -296,7 +348,7 @@
             field: 'createDate',
             title: '创建时间',
             clickToSelect: true
-        },]
+        }]
 
     });
 </script>

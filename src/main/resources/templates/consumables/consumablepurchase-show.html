@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;">
+    <title>耗材规格</title>
+    <link href="/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet">
+    <link href="/boostrapselect/bootstrap-select.min.css" rel="stylesheet">
+    <link href="/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row" style="margin-top: 20px ;margin-bottom: 20px">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/">
+                        <span>首页</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">搜索</div>
+            <div class="panel-body form-horizontal">
+                <form class="form-horizontal">
+                    <div class="row">
+                        <div class="form-group col-xs-12 col-sm-4  col-md-4 col-lg-4">
+                            <label class="" for="consumable-type-div-id">耗材种类</label>
+                            <div id="consumable-type-div-id">
+                                <select id="consumable-type-id" class="form-control selectpicker" width="fit"
+                                        data-live-search="true">
+                                    <option value="0">全部</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-xs-12 col-sm-4  col-md-4 col-lg-4">
+                            <label class="" for="consumable-item-div-id">耗 材</label>
+                            <div id="consumable-item-div-id">
+                                <select id="consumable-item-id" class="form-control selectpicker" width="fit"
+                                        data-live-search="true">
+                                    <option value="0">全部</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-xs-12 col-sm-4  col-md-4 col-lg-4">
+                            <label class="" for="consumable-specification-div-id">耗材规格</label>
+                            <div id="consumable-specification-div-id">
+                                <select id="consumable-specification-id" class="form-control selectpicker" width="auto"
+                                        data-live-search="true">
+                                    <option value="0">全部</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="form-group col-xs-12 col-sm-4  col-md-4 col-lg-4">
+                            <label for="time-begin-div-id">起始时间</label>
+                            <div class='input-group date' id='time-begin-div-id'>
+                                <input type='text' class="form-control" id="time-begin-id"/>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+
+                        </div>
+                        <div class="form-group col-xs-12 col-sm-4  col-md-4 col-lg-4">
+                            <label for="time-end-div-id">结束时间</label>
+                            <div class='input-group date' id='time-end-div-id'>
+                                <input type='text' class="form-control" id="time-end-id"/>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-xs-12 col-xs-12 col-sm-4  col-md-4 col-lg-4">
+                            <label for="btn_search">&nbsp;&nbsp;</label>
+                            <button type="button" id="btn_search"
+                                    class="btn btn-default  col-xs-10 col-xs-offset-1 col-sm-12  col-md-12 col-lg-12">查
+                                找
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <table id="main-table">
+        </table>
+    </div>
+    <div class="btn-group" id="cudr-toolbar" role="group">
+        <button type="button" id="btn-create" class="btn btn-default" data-toggle="create-modal">增加</button>
+        <button type="button" id="btn-remove" class="btn btn-default">删除</button>
+    </div>
+    <div class="modal fade" id="create-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body" id="create-modal-body">
+                    <form class="">
+                        <div class="form-group">
+                            <label for="modal-consumable-type-id">消耗品类型</label>
+                            <select id="modal-consumable-type-id" class="form-control selectpicker" width="fit"
+                                    data-live-search="true">
+                                <option value="0">全部</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-consumable-item-id">消耗品类目</label>
+                            <select id="modal-consumable-item-id" class="form-control selectpicker" width="fit"
+                                    data-live-search="true">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-consumable-specification-id">消耗品规格</label>
+                            <select id="modal-consumable-specification-id" class="form-control selectpicker" width="fit"
+                                    data-live-search="true">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="unit-price">单价</label>
+                            <input class="form-control" id="unit-price"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="count">数量</label>
+                            <input class="form-control" id="count"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-unit-id">单位</label>
+                            <select id="modal-unit-id" class="form-control selectpicker" width="fit"
+                                    data-live-search="true">
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="total-price">总价</label>
+                            <input class="form-control" id="total-price"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-buyer-id">购买者</label>
+                            <select id="modal-buyer-id" class="form-control selectpicker" width="fit"
+                                    data-live-search="true">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-reviewer-id">购买者</label>
+                            <select id="modal-reviewer-id" class="form-control selectpicker" width="fit"
+                                    data-live-search="true">
+                            </select>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-remove-modal-id" class="btn btn-default">关闭</button>
+                    <button type="button" id="btn-create-item" class="btn btn-primary">创建</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="alert-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body" id="alert-modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="price-tender-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body" id="price-tender-modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/jquery-3.4.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="/echarts.min.js"></script>
+<script src="/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+<script src="/bootstraptime/bootstrap-datetimepicker.js"></script>
+<script src="/bootstraptime/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="/boostrapselect/bootstrap-select.js"></script>
+
+
+<script>
+
+    $(function () {
+
+
+        $("#time-begin-id").datetimepicker({
+            autoclose: true,
+            format: 'yyyy-mm-dd hh:ii',
+            todayBtn: true,
+            language: 'zh-CN',
+            pickerPosition: "bottom-left"
+
+        });
+        $("#time-end-id").datetimepicker({
+            autoclose: true,
+            format: 'yyyy-mm-dd hh:ii',
+            todayBtn: true,
+            language: 'zh-CN',
+            pickerPosition: "bottom-left"
+        });
+
+
+        $("#btn_search").click(function () {
+            $("#main-table").bootstrapTable('refresh');
+        });
+
+        //modal-unit-id
+
+        function fillUnitSelect() {
+            $.ajax({
+                url: '/unititems',
+                method: 'get',
+                success: function (data) {
+                    if (data) {
+                        var select = $("#modal-unit-id");
+                        select.empty()
+                        for (var i = 0; i < data.length; i++) {
+                            var row = data[i];
+                            select.append("<option value='" + row.id + "'>" + row.name + "</option>");
+                        }
+                        select.selectpicker('refresh');
+                    }
+                },
+                error: function () {
+                    console.log("error")
+                }
+            });
+        }
+
+        function fillUserSelect() {
+            $.ajax({
+                url: '/users',
+                method: 'get',
+                success: function (data) {
+                    if (data) {
+                        var selectBuyer = $("#modal-buyer-id");
+                        var selectReviewer = $("#modal-reviewer-id");
+                        selectBuyer.empty()
+                        selectReviewer.empty()
+                        for (var i = 0; i < data.length; i++) {
+                            var row = data[i];
+                            selectBuyer.append("<option value='" + row.userId + "'>" + row.userName + "</option>");
+                            selectReviewer.append("<option value='" + row.userId + "'>" + row.userName + "</option>");
+                        }
+                        selectBuyer.selectpicker('refresh');
+                        selectReviewer.selectpicker('refresh');
+                    }
+                },
+                error: function () {
+                    console.log("error")
+                }
+            });
+        }
+
+        function fillConsumableType(isModal) {
+            var modal = "";
+
+            if (isModal) {
+                modal = "modal-";
+            }
+            var consumableTypeId = "#" + modal + "consumable-type-id";
+            var consumableItemId = "#" + modal + "consumable-item-id";
+            var consumableSpecificationId = "#" + modal + "consumable-specification-id";
+            $.ajax({
+                url: '/consumable/consumabletype',
+                method: 'get',
+                success: function (data) {
+                    if (data) {
+                        var select = $(consumableTypeId);
+                        if (isModal) {
+                            select.empty();
+                        }
+                        for (var i = 0; i < data.length; i++) {
+                            var row = data[i];
+                            select.append("<option value='" + row.id + "'>" + row.name + "</option>");
+                        }
+                        select.selectpicker('refresh');
+                    }
+                    $(consumableItemId).prop("disabled", true);
+                    $(consumableItemId).selectpicker('refresh');
+                    $(consumableSpecificationId).prop("disabled", true);
+                    $(consumableSpecificationId).selectpicker('refresh');
+
+                },
+                error: function () {
+                    console.log("error")
+                }
+            });
+        }
+
+        function fillConsumableItem(isModal) {
+            var modal = "";
+
+            if (isModal) {
+                modal = "modal-";
+            }
+            var consumableTypeId = "#" + modal + "consumable-type-id";
+            var consumableItemId = "#" + modal + "consumable-item-id";
+            var consumableSpecificationId = "#" + modal + "consumable-specification-id";
+            var typeId = $(consumableTypeId).val();
+            $.ajax({
+                url: '/consumable/' + typeId + '/consumableitem',
+                method: 'get',
+                success: function (data) {
+                    if (data) {
+                        var select = $(consumableItemId);
+                        select.empty();
+                        if (!isModal) {
+                            select.append("<option value='0'>全部</option>")
+                        }else{
+                            if(data.length>0){
+                                select.prop("disabled", false);
+                            }
+                        }
+
+                        for (var i = 0; i < data.length; i++) {
+                            var row = data[i];
+                            select.append("<option value='" + row.id + "'>" + row.name + "</option>");
+                        }
+                        select.selectpicker('refresh');
+                    }
+
+                    $(consumableSpecificationId).prop("disabled", true);
+                    $(consumableSpecificationId).selectpicker('refresh');
+
+                },
+                error: function () {
+                    console.log("error")
+                }
+            });
+        }
+
+        function fillConsumableSpecification(isModal) {
+            var modal = "";
+
+            if (isModal) {
+                modal = "modal-";
+            }
+            var consumableTypeId = "#" + modal + "consumable-type-id";
+            var consumableItemId = "#" + modal + "consumable-item-id";
+            var consumableSpecificationId = "#" + modal + "consumable-specification-id";
+            var itemId = $(consumableItemId).val();
+            $.ajax({
+                url: '/consumable/' + itemId + '/consumablespecification',
+                method: 'get',
+                success: function (data) {
+                    if (data) {
+                        var select = $(consumableSpecificationId);
+
+
+                        select.empty();
+                        if (!isModal) {
+                            select.append("<option value='0'>全部</option>")
+
+                        }else{
+                            if(data.length>0){
+                                select.prop("disabled", false);
+                            }
+                        }
+                        for (var i = 0; i < data.length; i++) {
+                            var row = data[i];
+                            select.append("<option value='" + row.id + "'>" + row.name + "</option>");
+                        }
+                        select.selectpicker('refresh');
+
+                    }
+
+                },
+                error: function () {
+                    console.log("error")
+                }
+            });
+        }
+
+        fillConsumableType(false)
+        fillConsumableType(true)
+
+
+        $('#consumable-type-id').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+            var currentVal = $(this).val();
+            if (currentVal != previousValue) {
+                $("#consumable-item-id").prop("disabled", false);
+                $("#consumable-item-id").selectpicker('refresh');
+                fillConsumableItem(false);
+            }
+        });
+
+
+        $('#consumable-item-id').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+            var currentVal = $(this).val();
+            if (currentVal != previousValue) {
+                $("#consumable-specification-id").prop("disabled", false);
+            }
+            $("#consumable-item-id").selectpicker('refresh');
+            fillConsumableSpecification(false);
+        });
+
+
+
+        $('#modal-consumable-type-id').on('hidden.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+            var currentVal = $(this).val();
+            $("#modal-consumable-item-id").prop("disabled", false);
+            $("#modal-consumable-item-id").selectpicker('refresh');
+            fillConsumableItem(true);
+        });
+
+
+        $('#modal-consumable-item-id').on('hidden.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+            /*$("#modal-consumable-specification-id").prop("disabled", false);
+            $("#modal-consumable-item-id").selectpicker('refresh');*/
+            fillConsumableSpecification(true);
+        });
+
+
+        function clearCreateModalBody() {
+            $("#modal-consumable-type-id").selectpicker('val', "0");
+            $("#modal-consumable-item-id").selectpicker('val', "0");
+            $("#modal-consumable-item-id").prop("disabled", true);
+            $("#modal-consumable-specification-id").selectpicker('val', "0");
+            $("#modal-consumable-specification-id").prop("disabled", true);
+
+            $("#modal-consumable-item-id").selectpicker('refresh');
+            $("#modal-consumable-specification-id").selectpicker('refresh');
+        }
+
+        function createCreateModalBody() {
+            //fillConsumableType(true);
+            fillUserSelect();
+            fillUnitSelect();
+        }
+
+        function alertFail(msg) {
+            var alertModalBody = $("#alert-modal-body");
+            alertModalBody.html("");
+            alertModalBody.append('<div class="alert alert-danger">' + msg + '</div>');
+
+            $("#alert-modal").modal("show");
+            setTimeout(function () {
+                $("#alert-modal").modal("hide");
+            }, 1200);
+        }
+
+        function alertSuccess(msg) {
+            var alertModalBody = $("#alert-modal-body");
+            alertModalBody.html("");
+            alertModalBody.append('<div class="modal-body" id="alert-modal-body">\n' +
+                '                    <div class="alert alert-success">' + msg + '</div>\n' +
+                '                </div>');
+
+            $("#alert-modal").modal("show");
+            setTimeout(function () {
+                $("#alert-modal").modal("hide");
+            }, 1200);
+        }
+
+        //createModalBody();
+        /*;*/
+        $("#btn-create").click(function () {
+            clearCreateModalBody()
+            createCreateModalBody()
+            $("#create-modal").modal("show");
+        });
+
+        //btn-remove
+
+        $("#btn-remove").click(function () {
+            var selections = $("#main-table").bootstrapTable("getSelections");
+            if (selections.length <= 0) {
+                alertFail("请选择要删除的数据")
+                return;
+            }
+            var dids = [];
+            for (var i = 0; i < selections.length; i++) {
+                dids.push(selections[i].id)
+            }
+            var alertModalBody = $("#alert-modal-body");
+            alertModalBody.html("");
+            alertModalBody.append('确定删除？'
+                + '<button type="button" id="modal-btn-delete-cancle-id" class="btn btn-default">关闭</button>\n' +
+                '<button type="button" id="modal-btn-delete-confirm-id" class="btn btn-primary">确定</button>'
+            );
+
+            $("#modal-btn-delete-cancle-id").click(function () {
+                $("#alert-modal").modal("hide");
+            });
+
+            $("#modal-btn-delete-confirm-id").click(function () {
+                $("#alert-modal").modal("hide");
+                $.ajax({
+                    url: '/consumable/consumablepurchase',
+                    method: 'delete',
+                    dataType: 'json',
+                    contentType: "application/json",
+                    data: JSON.stringify(dids),
+
+                    success: function (data) {
+                        if (data.isSuccess == 'Y') {
+                            alertSuccess("删除成功");
+                            $("#main-table").bootstrapTable('refresh');
+                        }
+                    }
+                })
+            });
+
+            $("#alert-modal").modal("show");
+
+        });
+
+        $("#btn-remove-modal-id").click(function () {
+            $("#create-modal").modal("hide");
+        });
+
+        $("#btn-create-item").click(function () {
+            var typeId = $("#modal-consumable-type-id").val();
+            var itemId = $("#modal-consumable-item-id").val();
+            var specificationId = $("#modal-consumable-specification-id").val();
+            var unitPrice = $("#unit-price").val();
+            var count = $("#count").val();
+            var unitId = $("#modal-unit-id").val();
+            var totalPrice = $("#total-price").val();
+            var buyerId = $("#modal-buyer-id").val();
+            var reviewerId = $("#modal-reviewer-id").val();
+
+            $("#create-modal").modal("hide");
+            $.ajax({
+                url: '/consumable/consumablepurchase',
+                method: 'post',
+                data: {
+                    consumableTypeId: typeId,
+                    consumableItemId: itemId,
+                    consumableSpecificationId: specificationId,
+                    unitPrice: unitPrice,
+                    count: count,
+                    unitId: unitId,
+                    totalPrice: totalPrice,
+                    buyerId: buyerId,
+                    reviewerId: reviewerId,
+
+                },
+                success: function (data) {
+                    alertSuccess("插入成功");
+                    clearCreateModalBody()
+                    $("#create-modal").modal("hide");
+                    //$table.bootstrapTable('refresh')
+                    $("#main-table").bootstrapTable('refresh');
+                },
+                error: function () {
+                    alertFail("插入失败");
+                }
+            });
+        });
+
+    });
+
+    function loadPriceTrendChart(id) {
+        var width = $("#price-tender-modal-body").css("width");
+        $("#price-tender-chart-id").css({width: width});
+        $.ajax({
+            url: '/consumable/consumablepurchase/' + id + '/prices',
+            method: 'get',
+            success: function (data) {
+
+
+                var chartDom = echarts.init(document.getElementById("price-tender-chart-id"));
+                var xAxisData = [];
+                var lineData = [];
+                for (var i = 0; i < data.length; i++) {
+                    xAxisData.push(data[i].createDateFormat);
+                    lineData.push(data[i].unitPrice);
+                }
+                console.log(xAxisData)
+                var option = {
+                    title: {text: '价格走势图'},
+                    legend: {show:false,align: 'left',bottom:3},
+                    toolbox: {
+                        bottom:3,
+                        feature: {
+                            magicType: {type: ['stack', 'tiled']},
+                            dataView: {},
+                            saveAsImage: {pixelRatio: 2}
+                        }
+                    },
+                    tooltip: {},
+                    xAxis: {
+                        data: xAxisData, silent: false,
+                        splitLine: {
+                            show: false
+                        },
+                        axisLabel: {
+                            show: true,
+                            rotate: 10
+                        }
+                    },
+                    yAxis: {},
+                    series: [{
+                        name: '价格走势', type: 'line', data: lineData,
+                        animationDelay: function (idx) {
+                            return idx * 10;
+                        }
+                    }],
+                    animationEasing: 'elasticOut',
+                    animationDelayUpdate: function (idx) {
+                        return idx * 5;
+                    }
+                }
+                console.log(option);
+                chartDom.setOption(option)
+
+
+            }
+        });
+    }
+
+    function priceTrendChart(id) {
+        $("#price-tender-modal-body").html("");
+        $("#price-tender-modal-body").append(
+            '<div class="row">' +
+            '<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">' +
+            '<div class="panel-body" id="price-tender-chart-id" style="height: 400px">' +
+            '</div>' +
+            '</div>' +
+            '</div>'
+        );
+
+        $("#price-tender-modal").modal("show");
+        $("#price-tender-modal").on("shown.bs.modal", function () {
+            loadPriceTrendChart(id);
+        });
+
+    }
+
+
+    $("#main-table").bootstrapTable({
+        url: '/consumable/consumablepurchase',
+        method: 'get',
+        striped: true,
+        cache: false,
+        pagination: true,
+        dataSidePagination: "server",
+        sidePagination: "server",
+        pageNumber: 1,
+        //初始化加载第一页，默认第一页
+        toolbar: "#cudr-toolbar",
+        pageSize: 10,                       //每页的记录行数（*）
+        pageList: [10, 25, 50, 100],
+        queryParams: function (params) {
+            var typeId = $("#consumable-type-id").val();
+            var itemId = $("#consumable-item-id").val();
+            var specificationId = $("#consumable-specification-id").val();
+            params.consumableItemId = itemId;
+            params.consumableTypeId = typeId;
+            params.consumableSpecificationId = specificationId;
+            console.log(params);
+            return params;
+        },
+        height: 500,
+        columns: [{
+            checkbox: true
+        },
+            {field: 'id', title: '编号', clickToSelect: true},
+            {field: 'consumableTypeId', title: '消耗品类型id', clickToSelect: true, visible: false},
+            {field: 'consumableItemId', title: '消耗品id', clickToSelect: true, visible: false},
+            {field: 'consumableSpecificationId', title: '消耗品规格id', clickToSelect: true, visible: false},
+            {field: 'consumableTypeName', title: '消耗品类型名称', clickToSelect: true, visible: true},
+            {field: 'consumableItemName', title: '消耗品种类名称', clickToSelect: true, visible: true},
+            {field: 'consumableSpecificationName', title: '消耗品规格名称', clickToSelect: true, visible: true},
+            {field: 'unitPrice', title: '消耗品单价', clickToSelect: true,},
+            {field: 'totalPrice', title: '消耗品总价', clickToSelect: true, visible: false},
+            {field: 'buyerId', title: '购买者id', clickToSelect: true},
+            {field: 'buyerName', title: '购买者', clickToSelect: true},
+            {field: 'reviewerId', title: '消耗者id', clickToSelect: true},
+            {field: 'reviewerName', title: '消耗者', clickToSelect: true},
+            {field: 'count', title: '数量', clickToSelect: true},
+            {field: 'unitId', title: '单位id', clickToSelect: true},
+            {field: 'unitName', title: '单位', clickToSelect: true},
+            {field: 'sts', title: '状态', clickToSelect: true},
+            {field: 'stsDate', title: '状态时间', clickToSelect: true},
+            {field: 'createDate', title: '创建时间', clickToSelect: true},
+            {
+                field: 'id', title: '价格走势', clickToSelect: true, formatter: function (value) {
+                    return '<div><a href="#" class="show-price-trend-chart" onclick="priceTrendChart(' + value + ')">查看价格走势</a></div>'
+                }
+            },
+        ],
+        onClickCell: function (field, value, row, $element) {
+            if (field == 'id' & $("a[class*=show-price-trend-chart]", $element)) {
+                console.log(row)
+            }
+        }
+
+    });
+</script>
+</body>
+</html>

@@ -91,14 +91,18 @@
       <if test="userName!=null">
         and user_name =#{userName,jdbcType=VARCHAR}
       </if>
-
+      <if test="loginName!=null">
+        and login_name =#{loginName,jdbcType=VARCHAR}
+      </if>
       <if test="phone!=null">
         and phone = #{phone,jdbcType=VARCHAR}
       </if>
       <if test="expireTime!=null">
         and expire_time = #{expireTime,jdbcType=TIMESTAMP}
       </if>
-
+      <if test="sts!=null">
+        and sts = #{sts}
+      </if>
     </where>
     
 

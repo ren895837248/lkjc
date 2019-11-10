@@ -9,6 +9,15 @@ public class PageInfo {
     private int offset;
     private int limit;
     private String order;
+    private String sortName;
+
+    public String getSortName() {
+        return sortName;
+    }
+
+    public void setSortName(String sortName) {
+        this.sortName = sortName;
+    }
 
     public int getOffset() {
         return offset;

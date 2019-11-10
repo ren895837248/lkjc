@@ -2,6 +2,8 @@ package com.lkjc.consumablesmanager.mapper;
 
 import com.lkjc.consumablesmanager.entity.ConsumablePurchaseRecord;
 import com.lkjc.consumablesmanager.entity.ConsumableStatiticsInit;
+import com.lkjc.consumablesmanager.entity.PageInfo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -47,4 +49,11 @@ public interface ConsumablePurchaseRecordMapper {
     int updateByPrimaryKey(ConsumablePurchaseRecord record);
 
     List<ConsumablePurchaseRecord> conductStatistics(ConsumableStatiticsInit consumableStatiticsInit);
+
+    List<ConsumablePurchaseRecord> selectPage(@Param("pageInfo") PageInfo pageInfo, @Param("consumablePurchaseRecord") ConsumablePurchaseRecord record);
+
+    int selectCount(@Param("consumablePurchaseRecord") ConsumablePurchaseRecord record);
+
+
+
 }

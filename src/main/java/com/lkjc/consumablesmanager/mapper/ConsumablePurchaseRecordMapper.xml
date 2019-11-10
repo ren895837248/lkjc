@@ -16,8 +16,11 @@
         <result column="unit_price" jdbcType="DOUBLE" property="unitPrice"/>
         <result column="total_price" jdbcType="DOUBLE" property="totalPrice"/>
         <result column="buyer_id" jdbcType="INTEGER" property="buyerId"/>
+        <result column="buyer_name" jdbcType="VARCHAR" property="buyerName"/>
+        <result column="reviewer_name" jdbcType="VARCHAR" property="reviewerName"/>
         <result column="reviewer_id" jdbcType="INTEGER" property="reviewerId"/>
         <result column="unit_id" jdbcType="INTEGER" property="unitId"/>
+        <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
         <result column="count" jdbcType="INTEGER" property="count"/>
         <result column="sts" jdbcType="CHAR" property="sts"/>
         <result column="sts_date" jdbcType="TIMESTAMP" property="stsDate"/>
@@ -108,5 +111,66 @@
         ) cpr
         group by cpr.consumable_type_id, cpr.consumable_item_id, cpr.consumable_specification_id, cpr.create_date;
 
+    </select>
+
+
+    <select id="selectPage" resultMap="BaseResultMap">
+        select id,
+         consumable_type_id,(select name from consumable_type ct where ct.id = consumable_type_id) consumable_type_name,
+         consumable_item_id, (select name from consumable_item ci where ci.id = consumable_item_id) consumable_item_name,
+         consumable_specification_id,(select name from consumable_specification cs where cs.id = consumable_specification_id) consumable_specification_name,
+         unit_price,total_price,
+         buyer_id, (select user_name from user where user_id = buyer_id ) buyer_name,
+         reviewer_id,(select user_name from user where user_id = reviewer_id ) reviewer_name,
+         unit_id,(select name from unit_item where id = unit_id ) unit_name,
+         count, sts, sts_date, create_date
+        from consumable_purchase_record
+        where 1=1
+        <if test="consumablePurchaseRecord.consumableTypeId!=null and consumablePurchaseRecord.consumableTypeId!=0">
+            and consumable_type_id = #{consumablePurchaseRecord.consumableTypeId}
+        </if>
+
+        <if test="consumablePurchaseRecord.consumableItemId!=null and consumablePurchaseRecord.consumableItemId!=0">
+            and consumable_item_id = #{consumablePurchaseRecord.consumableItemId}
+        </if>
+
+        <if test="consumablePurchaseRecord.consumableSpecificationId!=null and consumablePurchaseRecord.consumableSpecificationId!=0">
+            and consumable_specification_id = #{consumablePurchaseRecord.consumableSpecificationId}
+        </if>
+        <if test="consumablePurchaseRecord.timeBegin!=null">
+            and create_date &gt; #{consumablePurchaseRecord.timeBegin}
+        </if>
+        <if test="consumablePurchaseRecord.timeEnd!=null">
+            and create_date &lt; #{consumablePurchaseRecord.timeEnd}
+        </if>
+        <if test="pageInfo.sortName!=null">
+            order by ${pageInfo.sortName}
+            <if test="pageInfo.order!=null">
+             ${pageInfo.order}
+            </if>
+        </if>
+         limit #{pageInfo.offset},#{pageInfo.limit}
+    </select>
+    <select id="selectCount" resultType="int">
+        select count(1) `count`
+        from consumable_purchase_record
+        where 1=1
+        <if test="consumablePurchaseRecord.consumableTypeId!=null and consumablePurchaseRecord.consumableTypeId!=0">
+            and consumable_type_id = #{consumablePurchaseRecord.consumableTypeId}
+        </if>
+
+        <if test="consumablePurchaseRecord.consumableItemId!=null and consumablePurchaseRecord.consumableItemId!=0">
+            and consumable_item_id = #{consumablePurchaseRecord.consumableItemId}
+        </if>
+
+        <if test="consumablePurchaseRecord.consumableSpecificationId!=null and consumablePurchaseRecord.consumableSpecificationId!=0">
+            and consumable_specification_id = #{consumablePurchaseRecord.consumableSpecificationId}
+        </if>
+        <if test="consumablePurchaseRecord.timeBegin!=null">
+            and create_date &gt; #{consumablePurchaseRecord.timeBegin}
+        </if>
+        <if test="consumablePurchaseRecord.timeEnd!=null">
+            and create_date &lt; #{consumablePurchaseRecord.timeEnd}
+        </if>
     </select>
 </mapper>
