@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;">
-    <title>耗材规格</title>
+    <title>耗材出库管理</title>
     <link href="/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet">
     <link href="/boostrapselect/bootstrap-select.min.css" rel="stylesheet">
     <link href="/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
@@ -491,20 +491,23 @@
 
             $("#modal-btn-delete-confirm-id").click(function () {
                 $("#alert-modal").modal("hide");
-                $.ajax({
-                    url: '/consumable/consumableconsumption',
-                    method: 'delete',
-                    dataType: 'json',
-                    contentType: "application/json",
-                    data: JSON.stringify(dids),
+                setTimeout(function () {
+                    $.ajax({
+                        url: '/consumable/consumableconsumption',
+                        method: 'delete',
+                        dataType: 'json',
+                        contentType: "application/json",
+                        data: JSON.stringify(dids),
 
-                    success: function (data) {
-                        if (data.isSuccess == 'Y') {
-                            alertSuccess("删除成功");
-                            $("#main-table").bootstrapTable('refresh');
+                        success: function (data) {
+                            if (data.isSuccess == 'Y') {
+                                alertSuccess("删除成功");
+                                $("#main-table").bootstrapTable('refresh');
+                            }
                         }
-                    }
-                })
+                    })
+                },500)
+
             });
 
             $("#alert-modal").modal("show");
@@ -576,7 +579,6 @@
             params.consumableItemId = itemId;
             params.consumableTypeId = typeId;
             params.consumableSpecificationId = specificationId;
-            console.log(params);
             return params;
         },
         height: 500,

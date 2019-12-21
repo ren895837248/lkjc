@@ -12,6 +12,10 @@ public class LoginController {
         return "login";
     }
 
+    @RequestMapping(path = "/toindex",method = {RequestMethod.GET,RequestMethod.POST})
+    public String toIndex() {
+        return "redirect:index";
+    }
     @RequestMapping(path = "/index",method = {RequestMethod.GET,RequestMethod.POST})
     public String index() {
         return "index";

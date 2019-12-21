@@ -15,6 +15,15 @@ public class ConsumablePurchaseRecord extends Entity{
 
     private Timestamp timeBegin;
     private Timestamp timeEnd;
+    private String remarks;
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
 
     public Timestamp getTimeBegin() {
         return timeBegin;

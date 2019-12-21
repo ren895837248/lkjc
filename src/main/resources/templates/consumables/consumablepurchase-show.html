@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;">
-    <title>耗材规格</title>
+    <title>耗材入库管理</title>
     <link href="/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet">
     <link href="/boostrapselect/bootstrap-select.min.css" rel="stylesheet">
     <link href="/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
@@ -150,10 +150,14 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="modal-reviewer-id">购买者</label>
+                            <label for="modal-reviewer-id">签收人</label>
                             <select id="modal-reviewer-id" class="form-control selectpicker" width="fit"
                                     data-live-search="true">
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="remarks">备注</label>
+                            <textarea class="form-control" id="remarks" rows="2"></textarea>
                         </div>
                     </form>
 
@@ -507,20 +511,25 @@
 
             $("#modal-btn-delete-confirm-id").click(function () {
                 $("#alert-modal").modal("hide");
-                $.ajax({
-                    url: '/consumable/consumablepurchase',
-                    method: 'delete',
-                    dataType: 'json',
-                    contentType: "application/json",
-                    data: JSON.stringify(dids),
 
-                    success: function (data) {
-                        if (data.isSuccess == 'Y') {
-                            alertSuccess("删除成功");
-                            $("#main-table").bootstrapTable('refresh');
+                setTimeout(function () {
+                    $.ajax({
+                        url: '/consumable/consumablepurchase',
+                        method: 'delete',
+                        dataType: 'json',
+                        contentType: "application/json",
+                        data: JSON.stringify(dids),
+
+                        success: function (data) {
+                            if (data.isSuccess == 'Y') {
+                                alertSuccess("删除成功");
+                                $("#main-table").bootstrapTable('refresh');
+                            }
                         }
-                    }
-                })
+                    })
+                },500)
+
+
             });
 
             $("#alert-modal").modal("show");
@@ -541,6 +550,8 @@
             var totalPrice = $("#total-price").val();
             var buyerId = $("#modal-buyer-id").val();
             var reviewerId = $("#modal-reviewer-id").val();
+            var remarks = $("#remarks").val();
+
 
             $("#create-modal").modal("hide");
             $.ajax({
@@ -556,6 +567,7 @@
                     totalPrice: totalPrice,
                     buyerId: buyerId,
                     reviewerId: reviewerId,
+                    remarks: remarks
 
                 },
                 success: function (data) {
@@ -589,7 +601,6 @@
                     xAxisData.push(data[i].createDateFormat);
                     lineData.push(data[i].unitPrice);
                 }
-                console.log(xAxisData)
                 var option = {
                     title: {text: '价格走势图'},
                     legend: {show:false,align: 'left',bottom:3},
@@ -624,7 +635,6 @@
                         return idx * 5;
                     }
                 }
-                console.log(option);
                 chartDom.setOption(option)
 
 
@@ -671,7 +681,6 @@
             params.consumableItemId = itemId;
             params.consumableTypeId = typeId;
             params.consumableSpecificationId = specificationId;
-            console.log(params);
             return params;
         },
         height: 500,
@@ -689,14 +698,15 @@
             {field: 'totalPrice', title: '消耗品总价', clickToSelect: true, visible: false},
             {field: 'buyerId', title: '购买者id', clickToSelect: true},
             {field: 'buyerName', title: '购买者', clickToSelect: true},
-            {field: 'reviewerId', title: '消耗者id', clickToSelect: true},
-            {field: 'reviewerName', title: '消耗者', clickToSelect: true},
+            {field: 'reviewerId', title: '签收人', clickToSelect: true},
+            {field: 'reviewerName', title: '签收人', clickToSelect: true},
             {field: 'count', title: '数量', clickToSelect: true},
             {field: 'unitId', title: '单位id', clickToSelect: true},
             {field: 'unitName', title: '单位', clickToSelect: true},
             {field: 'sts', title: '状态', clickToSelect: true},
             {field: 'stsDate', title: '状态时间', clickToSelect: true},
             {field: 'createDate', title: '创建时间', clickToSelect: true},
+            {field: 'remarks', title: '备注', clickToSelect: true},
             {
                 field: 'id', title: '价格走势', clickToSelect: true, formatter: function (value) {
                     return '<div><a href="#" class="show-price-trend-chart" onclick="priceTrendChart(' + value + ')">查看价格走势</a></div>'
@@ -705,7 +715,6 @@
         ],
         onClickCell: function (field, value, row, $element) {
             if (field == 'id' & $("a[class*=show-price-trend-chart]", $element)) {
-                console.log(row)
             }
         }
 

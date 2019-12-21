@@ -22,5 +22,19 @@ public class DataSourceConf {
         return dataSource;
     }
 
+    /*double rate = 0.5;
+    double density = 1.33;
+    double densityWater = 1;
+
+    public double test(double t,double densityC){
+        double x = ((densityC * rate * t)/density - rate * t) /(1.0 - densityC/densityWater);
+        return x + t + rate *t;
+    }
+
+    public static void main(String[] args) {
+        DataSourceConf dataSourceConf = new DataSourceConf();
+        System.out.println(dataSourceConf.test(1000,1.2));
+    }*/
+
 
 }
